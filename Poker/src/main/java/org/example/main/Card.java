@@ -32,8 +32,4 @@ public class Card {
         return rank == card.rank && suit == card.suit;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(rank, suit);
-    }
 }

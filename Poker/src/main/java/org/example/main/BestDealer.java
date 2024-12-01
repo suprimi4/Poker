@@ -96,8 +96,13 @@ public class BestDealer implements Dealer {
             case FULL_HOUSE -> {
                 return compareFullHouse(playerOneSearch, playerTwoSearch);
             }
+            case FOUR_OF_A_KIND -> {
+                return compareFourOfAKind(board,playerOneSearch,playerTwoSearch);
+            }
+
             default -> {
-                return compareHighCard(board, playerOneSearch, playerTwoSearch);
+                System.out.println(playerOneSearch.getPokerCombination());
+                return compareKicker(board);
             }
 
         }
@@ -105,6 +110,27 @@ public class BestDealer implements Dealer {
 
     }
 
+
+    private PokerResult compareKicker(Board board) {
+        List<Card> playerOneHand = new ArrayList<>(board.getPlayerOne()) ;
+        List<Card> playerTwoHand = new ArrayList<>(board.getPlayerTwo());
+        playerOneHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+        playerTwoHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+        for (int i = 0; i < playerOneHand.size(); i++) {
+            int rankOne = playerOneHand.get(i).getRank().getValue();
+            int rankTwo = playerTwoHand.get(i).getRank().getValue();
+            if (rankOne > rankTwo ) {
+                return PokerResult.PLAYER_ONE_WIN;
+            }
+            if (rankOne < rankTwo) {
+                return PokerResult.PLAYER_TWO_WIN;
+
+            }
+        }
+
+        return PokerResult.DRAW;
+
+    }
     private PokerResult compareFlushOrStraight(List<Card> pOneHandCombination, List<Card> pTwoHandCombination) {
 
         for (int i = pOneHandCombination.size() - 1; i >= 0; i--) {
@@ -150,7 +176,7 @@ public class BestDealer implements Dealer {
 
     }
 
-    private PokerResult compareHighCard(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
+    private PokerResult compareFourOfAKind(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
 
         List<Card> playerOneHand = new ArrayList<>(board.getPlayerOne());
         List<Card> playerTwoHand = new ArrayList<>(board.getPlayerTwo());
