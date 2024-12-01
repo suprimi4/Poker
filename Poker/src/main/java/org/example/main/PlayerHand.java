@@ -67,7 +67,7 @@ public class PlayerHand {
         }
     }
 
-    private boolean isRoyalFlash(List<Card> cardsToCheck) {
+    public boolean isRoyalFlash(List<Card> cardsToCheck) {
         handCombination = new ArrayList<>();
         List<Card> suitedCards = getSuitedCards(cardsToCheck);
         suitedCards = trimToFive(suitedCards);
@@ -120,7 +120,7 @@ public class PlayerHand {
     }
 
 
-    private boolean isStraightFlush(List<Card> cardsToCheck) {
+    public boolean isStraightFlush(List<Card> cardsToCheck) {
 
         List<Card> cards = getSuitedCards(cardsToCheck);
         if (cards.size() < 5) {
@@ -132,7 +132,7 @@ public class PlayerHand {
     }
 
 
-    private boolean isFourOfAKind(List<Card> cardsToCheck) {
+    public boolean isFourOfAKind(List<Card> cardsToCheck) {
         handCombination = new ArrayList<>();
         Map<Integer, Integer> rankCount = getRankCount(cardsToCheck);
 
@@ -146,7 +146,7 @@ public class PlayerHand {
     }
 
 
-    private boolean isFullHouse(List<Card> cardsToCheck) {
+    public boolean isFullHouse(List<Card> cardsToCheck) {
         handCombination = new ArrayList<>();
         Map<Integer, Integer> rankCount = getRankCount(cardsToCheck);
 
@@ -181,7 +181,7 @@ public class PlayerHand {
     }
 
 
-    private boolean isFlush(List<Card> cardsToCheck) {
+    public boolean isFlush(List<Card> cardsToCheck) {
         handCombination = new ArrayList<>();
         handCombination = getSuitedCards(cardsToCheck);
         handCombination = sortCards(trimToFive(handCombination));
@@ -189,7 +189,7 @@ public class PlayerHand {
         return handCombination.size() == 5;
     }
 
-    private boolean isStraight(List<Card> cardsToCheck) {
+    public boolean isStraight(List<Card> cardsToCheck) {
 
         if (isAceLowStraight(cardsToCheck)) {
             return true;
@@ -207,6 +207,9 @@ public class PlayerHand {
                     currentCombination.add(cardsToCheck.get(i + 1));
                     handCombination = new ArrayList<>(currentCombination);
                 }
+            } else if ((cardsToCheck.get(i + 1).getRank().getValue() == cardsToCheck.get(i).getRank().getValue())) {
+                cardsToCheck.remove(i);
+                i--;
             } else {
                 currentCombination.add(cardsToCheck.get(i));
                 if (currentCombination.size() >= 5) {
@@ -239,7 +242,7 @@ public class PlayerHand {
         return handCombination.size() == 5;
     }
 
-    private boolean isThreeOfAKind(List<Card> cardsToCheck) {
+    public boolean isThreeOfAKind(List<Card> cardsToCheck) {
         Map<Integer, Integer> rankCount = getRankCount(cardsToCheck);
         handCombination = new ArrayList<>();
 
@@ -252,7 +255,7 @@ public class PlayerHand {
         return false;
     }
 
-    private boolean isTwoPair(List<Card> cardsToCheck) {
+    public boolean isTwoPair(List<Card> cardsToCheck) {
         handCombination = new ArrayList<>();
         Map<Integer, Integer> rankCount = getRankCount(cardsToCheck);
 
@@ -267,7 +270,7 @@ public class PlayerHand {
         return pairCounter == 2;
     }
 
-    private boolean isPair(List<Card> cardsToCheck) {
+    public boolean isPair(List<Card> cardsToCheck) {
 
         handCombination = new ArrayList<>();
         Map<Integer, Integer> rankCount = getRankCount(cardsToCheck);
