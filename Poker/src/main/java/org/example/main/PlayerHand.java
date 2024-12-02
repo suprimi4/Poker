@@ -1,9 +1,6 @@
 package org.example.main;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PlayerHand {
     private final List<Card> handAndTable;
@@ -43,7 +40,7 @@ public class PlayerHand {
     }
 
     private PokerCombinations determineCombination() {
-
+        //Поиск старшей комбинации в руки
         if (isRoyalFlash(handAndTable)) {
             return PokerCombinations.ROYAL_FLUSH;
         } else if (isStraightFlush(handAndTable)) {
@@ -93,7 +90,8 @@ public class PlayerHand {
 
     private List<Card> trimToFive(List<Card> cards) {
         cards = sortCards(cards);
-        for (int i = 0; i < cards.size() - 5; i++) {
+        int size = cards.size();
+        for (int i = 0; i < size - 5; i++) {
             cards.remove(0);
         }
         return cards;
@@ -183,14 +181,14 @@ public class PlayerHand {
 
     public boolean isFlush(List<Card> cardsToCheck) {
         handCombination = new ArrayList<>();
-        handCombination = getSuitedCards(cardsToCheck);
-        handCombination = sortCards(trimToFive(handCombination));
+        handCombination = sortCards(trimToFive(getSuitedCards(cardsToCheck)));
 
         return handCombination.size() == 5;
     }
 
-    public boolean isStraight(List<Card> cardsToCheck) {
 
+    public boolean isStraight(List<Card> cardsToCheck) {
+        // Поиск младшего стрита
         if (isAceLowStraight(cardsToCheck)) {
             return true;
         } else {
@@ -201,16 +199,15 @@ public class PlayerHand {
 
         cardsToCheck = sortCards(cardsToCheck);
         for (int i = 0; i < cardsToCheck.size() - 1; i++) {
-            if ((cardsToCheck.get(i + 1).getRank().getValue() - cardsToCheck.get(i).getRank().getValue() == 1)) {
+            int diff = cardsToCheck.get(i + 1).getRank().getValue() - cardsToCheck.get(i).getRank().getValue();
+            if  (diff == 1) {
                 currentCombination.add(cardsToCheck.get(i));
+                //Обработка случая, добавляения последнего элемента листа, входящего в стрит.PlayerHand playerOneSearch, PlayerHand playerTwoSearch
                 if (cardsToCheck.size() - 2 == i) {
                     currentCombination.add(cardsToCheck.get(i + 1));
                     handCombination = new ArrayList<>(currentCombination);
                 }
-            } else if ((cardsToCheck.get(i + 1).getRank().getValue() == cardsToCheck.get(i).getRank().getValue())) {
-                cardsToCheck.remove(i);
-                i--;
-            } else {
+            } else if (diff != 0) {
                 currentCombination.add(cardsToCheck.get(i));
                 if (currentCombination.size() >= 5) {
                     handCombination = new ArrayList<>(currentCombination);
@@ -307,20 +304,9 @@ public class PlayerHand {
 
 
     public List<Card> sortCards(List<Card> cards) {
-
-        List<Card> copyOfHand = new ArrayList<>(cards);
-        for (int i = 0; i < copyOfHand.size(); i++) {
-            for (int j = 0; j < copyOfHand.size() - 1 - i; j++) {
-                if (copyOfHand.get(j).getRank().getValue() > copyOfHand.get(j + 1).getRank().getValue()) {
-                    Card temp = copyOfHand.get(j);
-                    copyOfHand.set(j, copyOfHand.get(j + 1));
-                    copyOfHand.set(j + 1, temp);
-                }
-            }
-        }
-        cards = new ArrayList<>(copyOfHand);
-
-        return cards;
+        List<Card> sortedCards = new ArrayList<>(cards);
+        sortedCards.sort((card1, card2) -> Integer.compare(card1.getRank().getValue(), card2.getRank().getValue()));
+        return sortedCards;
     }
 
 

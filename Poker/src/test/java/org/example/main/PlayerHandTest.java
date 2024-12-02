@@ -11,12 +11,7 @@ class PlayerHandTest {
 
     @Test
     void testIsRoyalFlash() {
-        Board board = new Board("10HJH","2H5H","QHKHAH","KS","AS");
-        List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        List<Card> list = getCombinationList("10HJH","2H5H","QHKHAH","KS","AS");
         PlayerHand playerHand = new PlayerHand(list);
         System.out.println(playerHand.getHandCombination());
         assertTrue(playerHand.isRoyalFlash(list));
@@ -24,12 +19,7 @@ class PlayerHandTest {
 
     @Test
     void testIsStraightFlush() {
-        Board board = new Board("8H9H","2H5H","10H10S9S","JH","QH");
-        List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        List<Card> list = getCombinationList("8H9H","2H5H","10H10S9S","JH","QH");
         PlayerHand playerHand = new PlayerHand(list);
         System.out.println(playerHand.getHandCombination());
         assertTrue(playerHand.isStraightFlush(list));
@@ -37,12 +27,7 @@ class PlayerHandTest {
 
     @Test
     void testIsFourOfAKind() {
-        Board board = new Board("KHKS","2H5H","KC2C5C","KH","QH");
-        List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        List<Card> list = getCombinationList("KHKS","2H5H","KC2C5C","KH","QH");
         PlayerHand playerHand = new PlayerHand(list);
         System.out.println(playerHand.getHandCombination());
         assertTrue(playerHand.isFourOfAKind(list));
@@ -50,12 +35,7 @@ class PlayerHandTest {
 
     @Test
     void testIsFullHouse() {
-        Board board = new Board("3C4H","2H5H","KCKHKS","QD","QH");
-        List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        List<Card> list = getCombinationList("3C4H","2H5H","KCKHKS","QD","QH");
         PlayerHand playerHand = new PlayerHand(list);
         System.out.println(playerHand.getHandCombination());
         assertTrue(playerHand.isFullHouse(list));
@@ -63,26 +43,15 @@ class PlayerHandTest {
 
     @Test
     void testIsFlush() {
-        Board board = new Board("3C4H","2H5H","KCKHKS","QD","QH");
-        List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        List<Card> list = getCombinationList("3S4S", "5C6H", "7S8S9S", "10S", "AS");
         PlayerHand playerHand = new PlayerHand(list);
         System.out.println(playerHand.getHandCombination());
-        assertTrue(playerHand.isFullHouse(list));
+        assertTrue(playerHand.isFlush(list));
     }
 
     @Test
     void testIsStraight() {
-        Board board1 = new Board("ASKH","2H5H","QSJC10D","QD","QH");
-        Board board = new Board("AD2H","2H5H","4C5S6D","3D","QH");
-        List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        List<Card> list = getCombinationList("ASKH","2H5H","QSJC10D","QD","QH");
         PlayerHand playerHand = new PlayerHand(list);
         System.out.println(playerHand.getHandCombination());
         assertTrue(playerHand.isStraight(list));
@@ -92,13 +61,7 @@ class PlayerHandTest {
 
     @Test
     void testIsThreeOfAKind() {
-        Board board = new Board("KHKS","2H5H","KC2C5C","QC","JH");
-
-        List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        List<Card> list = getCombinationList("KHKS","2H5H","KC2C5C","QC","JH");
         PlayerHand playerHand = new PlayerHand(list);
         System.out.println(playerHand.getHandCombination());
         assertTrue(playerHand.isThreeOfAKind(list));
@@ -107,13 +70,7 @@ class PlayerHandTest {
 
     @Test
     void testIsTwoPair() {
-        Board board = new Board("KHKS","2H5H","10C10C5C","QC","JH");
-
-        List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        List<Card> list = getCombinationList("KHKS","2H5H","10C10C5C","QC","JH");
         PlayerHand playerHand = new PlayerHand(list);
         System.out.println(playerHand.getHandCombination());
         assertTrue(playerHand.isTwoPair(list));
@@ -121,15 +78,19 @@ class PlayerHandTest {
 
     @Test
     void testIsPair() {
-        Board board = new Board("KHKS","2H5H","10C9C5C","QC","JH");
+        List<Card> list = getCombinationList("KHKS","2H5H","10C9C5C","QC","JH");
+        PlayerHand playerHand = new PlayerHand(list);
+        System.out.println(playerHand.getHandCombination());
+        assertTrue(playerHand.isPair(list));
+    }
 
+    private  List<Card> getCombinationList( String playerOne, String playerTwo, String flop, String turn, String river) {
+        Board board = new Board(playerOne,playerTwo,flop,turn,river);
         List<Card> list = new ArrayList<>();
         list.addAll(board.getPlayerOne());
         list.addAll(board.getFlop());
         list.addAll(board.getTurn());
         list.addAll(board.getRiver());
-        PlayerHand playerHand = new PlayerHand(list);
-        System.out.println(playerHand.getHandCombination());
-        assertTrue(playerHand.isPair(list));
+        return list;
     }
 }

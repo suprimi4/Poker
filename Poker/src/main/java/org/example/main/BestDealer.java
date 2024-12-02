@@ -68,12 +68,12 @@ public class BestDealer implements Dealer {
         PlayerHand playerOneSearch = new PlayerHand(playerOneCombintaion);
         PlayerHand playerTwoSearch = new PlayerHand(playerTwoCombination);
 
-        int playerOneRank = playerOneSearch.getPokerCombination().getRank();
-        int playerTwoRank = playerTwoSearch.getPokerCombination().getRank();
+        int combintaionOneRank = playerOneSearch.getPokerCombination().getRank();
+        int combiinationTwoRank = playerTwoSearch.getPokerCombination().getRank();
 
-        if (playerOneRank > playerTwoRank) {
+        if (combintaionOneRank > combiinationTwoRank) {
             return PokerResult.PLAYER_ONE_WIN;
-        } else if (playerOneRank < playerTwoRank) {
+        } else if (combintaionOneRank < combiinationTwoRank) {
             return PokerResult.PLAYER_TWO_WIN;
         } else {
             return compareHands(board, playerOneSearch, playerTwoSearch);
@@ -81,57 +81,123 @@ public class BestDealer implements Dealer {
     }
 
     private PokerResult compareHands(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
-        List<Card> pOneHandCombination = playerOneSearch.getHandCombination();
-        List<Card> pTwoHandCombination = playerTwoSearch.getHandCombination();
-        pOneHandCombination = playerOneSearch.sortCards(pOneHandCombination);
-        pTwoHandCombination = playerTwoSearch.sortCards(pTwoHandCombination);
+
 
         switch (playerOneSearch.getPokerCombination()) {
             case ROYAL_FLUSH -> {
                 return PokerResult.DRAW;
             }
             case STRAIGHT_FLUSH, FLUSH, STRAIGHT -> {
-                return compareFlushOrStraight(pOneHandCombination, pTwoHandCombination);
+                return compareFlushOrStraight(playerOneSearch, playerTwoSearch);
             }
             case FULL_HOUSE -> {
                 return compareFullHouse(playerOneSearch, playerTwoSearch);
+            } case HIGH_CARD -> {
+                return compareHighCard(board, playerOneSearch, playerTwoSearch);
             }
-            case FOUR_OF_A_KIND -> {
-                return compareFourOfAKind(board,playerOneSearch,playerTwoSearch);
-            }
-
             default -> {
-                System.out.println(playerOneSearch.getPokerCombination());
-                return compareKicker(board);
+                return compareHighCombo(board,playerOneSearch,playerTwoSearch);
             }
 
         }
 
-
     }
 
-
-    private PokerResult compareKicker(Board board) {
-        List<Card> playerOneHand = new ArrayList<>(board.getPlayerOne()) ;
+    private PokerResult compareHighCard(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
+        List<Card> playerOneHand = new ArrayList<>(board.getPlayerOne());
         List<Card> playerTwoHand = new ArrayList<>(board.getPlayerTwo());
         playerOneHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
         playerTwoHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
-        for (int i = 0; i < playerOneHand.size(); i++) {
+        for (int i = 0; i < playerTwoHand.size(); i++) {
             int rankOne = playerOneHand.get(i).getRank().getValue();
             int rankTwo = playerTwoHand.get(i).getRank().getValue();
-            if (rankOne > rankTwo ) {
+            if (rankOne > rankTwo) {
                 return PokerResult.PLAYER_ONE_WIN;
-            }
-            if (rankOne < rankTwo) {
+            } else if (rankOne < rankTwo){
                 return PokerResult.PLAYER_TWO_WIN;
+            }
+        }
+        return PokerResult.DRAW;
 
+    }
+
+    private PokerResult compareHighCombo(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
+        List<Card> playerOneCombo = playerOneSearch.getHandCombination();
+        List<Card> playerTwoCombo = playerTwoSearch.getHandCombination();
+
+
+        playerOneCombo.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+        playerTwoCombo.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+
+        for (int i = 0; i < playerTwoCombo.size(); i++) {
+            int rankOne = playerOneCombo.get(i).getRank().getValue();
+            int rankTwo = playerTwoCombo.get(i).getRank().getValue();
+            if (rankOne > rankTwo) {
+                return PokerResult.PLAYER_ONE_WIN;
+            } else if (rankOne < rankTwo){
+                return PokerResult.PLAYER_TWO_WIN;
+            }
+        }
+        return compareKicker(board,playerOneCombo,playerTwoCombo);
+
+    }
+
+    private PokerResult compareKicker(Board board, List<Card> playerOneCombo, List<Card> playerTwoCombo) {
+        List<Card> fullTable = new ArrayList<>(board.getFlop());
+        fullTable.addAll(board.getTurn());
+        fullTable.addAll(board.getRiver());
+        fullTable.addAll(board.getPlayerOne());
+        fullTable.addAll(board.getPlayerTwo());
+        fullTable.removeAll(playerOneCombo);
+        fullTable.removeAll(playerTwoCombo);
+        fullTable.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+
+        int index = 0;
+
+        for (int i = playerOneCombo.size(); i < 5 ; i++) {
+            playerOneCombo.add(fullTable.get(index));
+            playerTwoCombo.add(fullTable.get(index++));
+        }
+        playerOneCombo.retainAll(board.getPlayerOne());
+        playerTwoCombo.retainAll(board.getPlayerTwo());
+
+        if (playerOneCombo.isEmpty() && playerTwoCombo.isEmpty()) {
+            return PokerResult.DRAW;
+        } else if (playerOneCombo.isEmpty()) {
+            return PokerResult.PLAYER_TWO_WIN;
+        } else if (playerTwoCombo.isEmpty()) {
+            return PokerResult.PLAYER_ONE_WIN;
+        }
+        playerOneCombo.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+        playerTwoCombo.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+
+        int maxLength = Math.max(playerOneCombo.size(),playerTwoCombo.size());
+
+        for (int i = 0; i < maxLength; i++) {
+            Integer rankOne = i < playerOneCombo.size() ? playerOneCombo.get(i).getRank().getValue() : null;
+            Integer rankTwo = i < playerTwoCombo.size() ? playerTwoCombo.get(i).getRank().getValue() : null;
+
+            if (rankOne == null) return PokerResult.PLAYER_TWO_WIN;
+            if (rankTwo == null) return PokerResult.PLAYER_ONE_WIN;
+
+            if (rankOne > rankTwo) {
+                return PokerResult.PLAYER_ONE_WIN;
+            } else if (rankOne < rankTwo) {
+                return PokerResult.PLAYER_TWO_WIN;
             }
         }
 
         return PokerResult.DRAW;
-
     }
-    private PokerResult compareFlushOrStraight(List<Card> pOneHandCombination, List<Card> pTwoHandCombination) {
+
+
+    private PokerResult compareFlushOrStraight(PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
+
+        List<Card> pOneHandCombination = playerOneSearch.getHandCombination();
+        List<Card> pTwoHandCombination = playerTwoSearch.getHandCombination();
+
+        pOneHandCombination = playerOneSearch.sortCards(pOneHandCombination);
+        pTwoHandCombination = playerTwoSearch.sortCards(pTwoHandCombination);
 
         for (int i = pOneHandCombination.size() - 1; i >= 0; i--) {
             int rankOne = pOneHandCombination.get(i).getRank().getValue();
@@ -176,71 +242,7 @@ public class BestDealer implements Dealer {
 
     }
 
-    private PokerResult compareFourOfAKind(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
 
-        List<Card> playerOneHand = new ArrayList<>(board.getPlayerOne());
-        List<Card> playerTwoHand = new ArrayList<>(board.getPlayerTwo());
-
-        List<Card> boardCards = new ArrayList<>();
-        boardCards.addAll(board.getFlop());
-        boardCards.addAll(board.getTurn());
-        boardCards.addAll(board.getRiver());
-
-
-        playerOneHand.removeAll(playerOneSearch.getHandCombination());
-        playerTwoHand.removeAll(playerTwoSearch.getHandCombination());
-
-        List<Card> remainingBoardCards = new ArrayList<>(boardCards);
-        remainingBoardCards.removeAll(playerOneSearch.getHandCombination());
-        remainingBoardCards.removeAll(playerTwoSearch.getHandCombination());
-
-        int maxBoardCard = remainingBoardCards.stream()
-                .mapToInt(card -> card.getRank().getValue())
-                .max()
-                .orElse(0);
-
-        int maxPlayerOne = playerOneHand.stream()
-                .mapToInt(card -> card.getRank().getValue())
-                .max()
-                .orElse(0);
-
-        int maxPlayerTwo = playerTwoHand.stream()
-                .mapToInt(card -> card.getRank().getValue())
-                .max()
-                .orElse(0);
-
-
-        if (maxBoardCard > maxPlayerOne && maxBoardCard > maxPlayerTwo) {
-            return PokerResult.DRAW;
-        }
-
-
-        if (maxPlayerOne > maxPlayerTwo) {
-            return PokerResult.PLAYER_ONE_WIN;
-        }
-        if (maxPlayerOne < maxPlayerTwo) {
-            return PokerResult.PLAYER_TWO_WIN;
-        }
-
-
-        playerOneHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
-        playerTwoHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
-
-        for (int i = 0; i < Math.min(playerOneHand.size(), playerTwoHand.size()); i++) {
-            int rankPlayerOne = playerOneHand.get(i).getRank().getValue();
-            int rankPlayerTwo = playerTwoHand.get(i).getRank().getValue();
-
-            if (rankPlayerOne > rankPlayerTwo) {
-                return PokerResult.PLAYER_ONE_WIN;
-            }
-            if (rankPlayerOne < rankPlayerTwo) {
-                return PokerResult.PLAYER_TWO_WIN;
-            }
-        }
-
-
-        return PokerResult.DRAW;
-    }
 
 
     private void validateBoard(Board board) throws InvalidPokerBoardException {

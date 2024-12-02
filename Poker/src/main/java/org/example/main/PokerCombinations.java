@@ -21,4 +21,6 @@ public enum PokerCombinations {
     public int getRank() {
         return rank;
     }
+
+
 }
