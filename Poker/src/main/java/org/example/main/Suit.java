@@ -1,7 +1,7 @@
 package org.example.main;
 
 public enum Suit {
-    HEARTS("♥","H"),
+    HEARTS("♥", "H"),
     DIAMONDS("♦", "D"),
     CLUBS("♣", "C"),
     SPADES("♠", "S");
@@ -12,6 +12,14 @@ public enum Suit {
     public String getValue() {
         return value;
     }
+    public static Suit fromSymbol(String symbol) {
+        for (Suit suit : Suit.values()) {
+            if (suit.getValue().equals(symbol)) {
+                return suit;
+            }
+        }
+        return null;
+    }
 
     Suit(String symbol, String value) {
         this.symbol = symbol;
@@ -19,11 +27,13 @@ public enum Suit {
     }
 
     public String getSymbol() {
-        return symbol;
+        return value;
     }
 
     @Override
     public String toString() {
         return symbol;
     }
+
+
 }

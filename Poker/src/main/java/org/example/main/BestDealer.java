@@ -1,5 +1,6 @@
 package org.example.main;
 
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,38 +15,26 @@ public class BestDealer implements Dealer {
 
     @Override
     public Board dealCardsToPlayers() {
-        List<Card> playerOneCards = new ArrayList<>();
-        playerOneCards.add(deck.nextCards());
-        playerOneCards.add(deck.nextCards());
-
-        List<Card> playerTwoCards = new ArrayList<>();
-        playerTwoCards.add(deck.nextCards());
-        playerTwoCards.add(deck.nextCards());
-        return new Board(playerOneCards, playerTwoCards, null, null, null);
+        String playerOneCards = deck.nextCards().toString() + deck.nextCards().toString();
+        String playerTwoCards = deck.nextCards().toString() + deck.nextCards().toString();
+        return new Board(playerOneCards, playerTwoCards, "", "", "");
     }
 
     @Override
     public Board dealFlop(Board board) {
-        List<Card> flop = new ArrayList<>();
-        flop.add(deck.nextCards());
-        flop.add(deck.nextCards());
-        flop.add(deck.nextCards());
-
-
-        return new Board(board.getPlayerOne(), board.getPlayerTwo(), flop, null, null);
+        String flop = deck.nextCards().toString() + deck.nextCards().toString() + deck.nextCards().toString();
+        return new Board(board.getPlayerOne(), board.getPlayerTwo(), flop, "", "");
     }
 
     @Override
     public Board dealTurn(Board board) {
-        List<Card> turn = new ArrayList<>();
-        turn.add(deck.nextCards());
-        return new Board(board.getPlayerOne(), board.getPlayerTwo(), board.getFlop(), turn, null);
+        String turn = deck.nextCards().toString();
+        return new Board(board.getPlayerOne(), board.getPlayerTwo(), board.getFlop(), turn, "");
     }
 
     @Override
     public Board dealRiver(Board board) {
-        List<Card> river = new ArrayList<>();
-        river.add(deck.nextCards());
+        String river = deck.nextCards().toString();
         return new Board(board.getPlayerOne(), board.getPlayerTwo(), board.getFlop(), board.getTurn(), river);
     }
 
@@ -53,17 +42,17 @@ public class BestDealer implements Dealer {
     public PokerResult decideWinner(Board board) throws InvalidPokerBoardException {
         validateBoard(board);
 
-        List<Card> playerOneCombintaion = new ArrayList<>(board.getPlayerOne());
+        List<Card> playerOneCombintaion = new ArrayList<>(board.getPlayerOneCards());
 
-        playerOneCombintaion.addAll(board.getFlop());
-        playerOneCombintaion.addAll(board.getTurn());
-        playerOneCombintaion.addAll(board.getRiver());
+        playerOneCombintaion.addAll(board.getFlopCards());
+        playerOneCombintaion.addAll(board.getTurnCards());
+        playerOneCombintaion.addAll(board.getRiverCards());
 
-        List<Card> playerTwoCombination = new ArrayList<>(board.getPlayerTwo());
+        List<Card> playerTwoCombination = new ArrayList<>(board.getPlayerTwoCards());
 
-        playerTwoCombination.addAll(board.getFlop());
-        playerTwoCombination.addAll(board.getTurn());
-        playerTwoCombination.addAll(board.getRiver());
+        playerTwoCombination.addAll(board.getFlopCards());
+        playerTwoCombination.addAll(board.getTurnCards());
+        playerTwoCombination.addAll(board.getRiverCards());
 
         PlayerHand playerOneSearch = new PlayerHand(playerOneCombintaion);
         PlayerHand playerTwoSearch = new PlayerHand(playerTwoCombination);
@@ -104,8 +93,8 @@ public class BestDealer implements Dealer {
     }
 
     private PokerResult compareHighCard(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
-        List<Card> playerOneHand = new ArrayList<>(board.getPlayerOne());
-        List<Card> playerTwoHand = new ArrayList<>(board.getPlayerTwo());
+        List<Card> playerOneHand = new ArrayList<>(board.getPlayerOneCards());
+        List<Card> playerTwoHand = new ArrayList<>(board.getPlayerTwoCards());
         playerOneHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
         playerTwoHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
         for (int i = 0; i < playerTwoHand.size(); i++) {
@@ -143,11 +132,11 @@ public class BestDealer implements Dealer {
     }
 
     private PokerResult compareKicker(Board board, List<Card> playerOneCombo, List<Card> playerTwoCombo) {
-        List<Card> fullTable = new ArrayList<>(board.getFlop());
-        fullTable.addAll(board.getTurn());
-        fullTable.addAll(board.getRiver());
-        fullTable.addAll(board.getPlayerOne());
-        fullTable.addAll(board.getPlayerTwo());
+        List<Card> fullTable = new ArrayList<>();
+        fullTable.addAll(board.getTurnCards());
+        fullTable.addAll(board.getRiverCards());
+        fullTable.addAll(board.getPlayerOneCards());
+        fullTable.addAll(board.getPlayerTwoCards());
         fullTable.removeAll(playerOneCombo);
         fullTable.removeAll(playerTwoCombo);
         fullTable.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
@@ -158,8 +147,8 @@ public class BestDealer implements Dealer {
             playerOneCombo.add(fullTable.get(index));
             playerTwoCombo.add(fullTable.get(index++));
         }
-        playerOneCombo.retainAll(board.getPlayerOne());
-        playerTwoCombo.retainAll(board.getPlayerTwo());
+        playerOneCombo.retainAll(board.getPlayerOneCards());
+        playerTwoCombo.retainAll(board.getPlayerTwoCards());
 
         if (playerOneCombo.isEmpty() && playerTwoCombo.isEmpty()) {
             return PokerResult.DRAW;
@@ -246,30 +235,63 @@ public class BestDealer implements Dealer {
 
 
     private void validateBoard(Board board) throws InvalidPokerBoardException {
-        if (board.getPlayerOne().size() != 2 || board.getPlayerTwo().size() != 2) {
+        if (board.getPlayerOneCards().size() != 2 || board.getPlayerTwoCards().size() != 2) {
             throw new InvalidPokerBoardException("Игроки должны иметь по 2 карты в руке.");
         }
 
-        if (board.getFlop().size() != 3) {
+        if (board.getFlopCards().size() != 3) {
             throw new InvalidPokerBoardException("Флоп должен содержать 3 карты.");
         }
-        if (board.getTurn() == null) {
+        if (board.getTurn() == null || board.getTurn().isEmpty()) {
             throw new InvalidPokerBoardException("Терн должен быть на столе");
         }
-        if (board.getRiver() == null) {
+        if (board.getRiver() == null || board.getRiver().isEmpty()) {
             throw new InvalidPokerBoardException("Ривер должен быть на столе");
         }
 
         List<Card> allCards = new ArrayList<>();
-        allCards.addAll(board.getPlayerOne());
-        allCards.addAll(board.getPlayerTwo());
-        allCards.addAll(board.getFlop());
-        allCards.addAll(board.getTurn());
-        allCards.addAll(board.getRiver());
+        allCards.addAll(board.getPlayerOneCards());
+        allCards.addAll(board.getPlayerTwoCards());
+        allCards.addAll(board.getFlopCards());
+        allCards.addAll(board.getTurnCards());
+        allCards.addAll(board.getRiverCards());
 
         Set<Card> uniqueCards = new HashSet<>(allCards);
         if (uniqueCards.size() != allCards.size()) {
             throw new InvalidPokerBoardException("Найдены дупликаты карт на столе.");
         }
     }
+    private List<Card> parseStringToCard(String cards) {
+        List<Card> parseHand = new ArrayList<>();
+        StringBuilder rank = new StringBuilder();
+        Suit suitValue = null;
+        Rank rankValue = null;
+
+        for (int i = 0; i < cards.length(); i++) {
+            char currentChar = cards.charAt(i);
+            if (currentChar != 'H' && currentChar != 'D' && currentChar != 'C' && currentChar != 'S') {
+                rank.append(currentChar);
+            } else {
+                for (Rank ranks : Rank.values()) {
+                    if (ranks.getSymbol().equals(String.valueOf(rank))) {
+                        rankValue = ranks;
+                        break;
+                    }
+                }
+                for (Suit suit : Suit.values()) {
+                    if (suit.getValue().equals(String.valueOf(currentChar))){
+                        suitValue = suit;
+                        break;
+                    }
+                }
+                parseHand.add(new Card(rankValue, suitValue));
+                suitValue = null;
+                rankValue = null;
+                rank = new StringBuilder();
+            }
+
+        }
+        return parseHand;
+    }
+
 }

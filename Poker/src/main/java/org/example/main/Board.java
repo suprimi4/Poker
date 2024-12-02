@@ -1,7 +1,6 @@
 package org.example.main;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,45 +10,45 @@ public class Board {
     /**
      * Две карты первого игрока
      */
-    private final List<Card> playerOne;
+    private final String playerOne;
     /**
      * Две карты второго игрока
      */
-    private final List<Card> playerTwo;
+    private final String playerTwo;
     /**
      * Три карты, открываются после раздачи карт игрокам
      */
-    private final List<Card> flop;
+    private final String flop;
     /**
      * Одна карта, открывается после flop
      */
-    private final List<Card> turn;
+    private final String turn;
     /**
      * Одна карта, открывается после turn
      */
-    private final List<Card> river;
+    private final String river;
 
-    public List<Card> getPlayerOne() {
-        return Collections.unmodifiableList(playerOne);
+    public String getPlayerOne() {
+        return playerOne;
     }
 
-    public List<Card> getPlayerTwo() {
-        return Collections.unmodifiableList(playerTwo);
+    public String getPlayerTwo() {
+        return playerTwo;
     }
 
-    public List<Card> getFlop() {
-        return Collections.unmodifiableList(flop);
+    public String getFlop() {
+        return flop;
     }
 
-    public List<Card> getTurn() {
-        return Collections.unmodifiableList(turn);
+    public String getTurn() {
+        return turn;
     }
 
-    public List<Card> getRiver() {
-        return Collections.unmodifiableList(river);
+    public String getRiver() {
+        return river;
     }
 
-    public Board(List<Card> playerOne, List<Card> playerTwo, List<Card> flop, List<Card> turn, List<Card> river) {
+    public Board(String playerOne, String playerTwo, String flop, String turn, String river) {
         this.playerOne = playerOne;
         this.playerTwo = playerTwo;
         this.flop = flop;
@@ -57,13 +56,15 @@ public class Board {
         this.river = river;
     }
 
-    public Board(String playerOne, String playerTwo, String flop, String turn, String river) {
-
-        this.playerOne = parseStringToCard(playerOne);
-        this.playerTwo = parseStringToCard(playerTwo);
-        this.flop = parseStringToCard(flop);
-        this.turn = parseStringToCard(turn);
-        this.river = parseStringToCard(river);
+    @Override
+    public String toString() {
+        return "Board{" +
+                "playerOne='" + playerOne + '\'' +
+                ", playerTwo='" + playerTwo + '\'' +
+                ", flop='" + flop + '\'' +
+                ", turn='" + turn + '\'' +
+                ", river='" + river + '\'' +
+                '}';
     }
 
     private List<Card> parseStringToCard(String cards) {
@@ -99,15 +100,24 @@ public class Board {
         return parseHand;
     }
 
-
-    @Override
-    public String toString() {
-        return "main.Board{" +
-                "playerOne='" + playerOne + '\'' +
-                ", playerTwo='" + playerTwo + '\'' +
-                ", flop='" + flop + '\'' +
-                ", turn='" + turn + '\'' +
-                ", river='" + river + '\'' +
-                '}';
+    public List<Card> getPlayerOneCards() {
+        return parseStringToCard(playerOne);
     }
+
+    public List<Card> getPlayerTwoCards() {
+        return parseStringToCard(playerTwo);
+    }
+
+    public List<Card> getFlopCards() {
+        return parseStringToCard(flop);
+    }
+
+    public List<Card> getTurnCards() {
+        return parseStringToCard(turn);
+    }
+
+    public List<Card> getRiverCards() {
+        return parseStringToCard(river);
+    }
+
 }

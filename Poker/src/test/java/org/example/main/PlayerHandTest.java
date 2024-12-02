@@ -87,10 +87,10 @@ class PlayerHandTest {
     private  List<Card> getCombinationList( String playerOne, String playerTwo, String flop, String turn, String river) {
         Board board = new Board(playerOne,playerTwo,flop,turn,river);
         List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOne());
-        list.addAll(board.getFlop());
-        list.addAll(board.getTurn());
-        list.addAll(board.getRiver());
+        list.addAll(board.getPlayerOneCards());
+        list.addAll(board.getFlopCards());
+        list.addAll(board.getTurnCards());
+        list.addAll(board.getRiverCards());
         return list;
     }
 }
