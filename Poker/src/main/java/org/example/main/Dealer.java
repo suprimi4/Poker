@@ -1,4 +1,8 @@
-package org.example.main;
+package org.example;
+
+import org.example.main.Board;
+import org.example.main.InvalidPokerBoardException;
+import org.example.main.PokerResult;
 
 /**
  * Проводит игру по правилам Техасского Холдема
