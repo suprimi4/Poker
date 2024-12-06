@@ -96,8 +96,8 @@ public class BestDealer implements Dealer {
         playerOneHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
         playerTwoHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
 
-        List<Card> tableCards = new ArrayList<>(board.getTurnCards());
-        tableCards.addAll(board.getFlopCards());
+        List<Card> tableCards = new ArrayList<>(board.getFlopCards());
+        tableCards.addAll(board.getTurnCards());
         tableCards.addAll(board.getRiverCards());
 
         tableCards.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
