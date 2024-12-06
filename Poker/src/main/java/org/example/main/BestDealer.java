@@ -1,10 +1,7 @@
 package org.example.main;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BestDealer implements Dealer {
     Deck deck;
@@ -82,7 +79,7 @@ public class BestDealer implements Dealer {
             case FULL_HOUSE -> {
                 return compareFullHouse(playerOneSearch, playerTwoSearch);
             } case HIGH_CARD -> {
-                return compareHighCard(board, playerOneSearch, playerTwoSearch);
+                return compareHighCard(board);
             }
             default -> {
                 return compareHighCombo(board,playerOneSearch,playerTwoSearch);
@@ -92,14 +89,30 @@ public class BestDealer implements Dealer {
 
     }
 
-    private PokerResult compareHighCard(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
+    private PokerResult compareHighCard(Board board) {
         List<Card> playerOneHand = new ArrayList<>(board.getPlayerOneCards());
         List<Card> playerTwoHand = new ArrayList<>(board.getPlayerTwoCards());
+
         playerOneHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
         playerTwoHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+
+        List<Card> tableCards = new ArrayList<>(board.getTurnCards());
+        tableCards.addAll(board.getFlopCards());
+        tableCards.addAll(board.getRiverCards());
+
+        tableCards.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+        int maxTableValue = tableCards.get(0).getRank().getValue();
+
+        int rankOne = playerOneHand.get(0).getRank().getValue();
+        int rankTwo = playerTwoHand.get(0).getRank().getValue();
+
+        if (maxTableValue > rankOne && maxTableValue > rankTwo) {
+            return PokerResult.DRAW;
+        }
+
         for (int i = 0; i < playerTwoHand.size(); i++) {
-            int rankOne = playerOneHand.get(i).getRank().getValue();
-            int rankTwo = playerTwoHand.get(i).getRank().getValue();
+            rankOne = playerOneHand.get(i).getRank().getValue();
+            rankTwo = playerTwoHand.get(i).getRank().getValue();
             if (rankOne > rankTwo) {
                 return PokerResult.PLAYER_ONE_WIN;
             } else if (rankOne < rankTwo){
@@ -185,8 +198,9 @@ public class BestDealer implements Dealer {
         List<Card> pOneHandCombination = playerOneSearch.getHandCombination();
         List<Card> pTwoHandCombination = playerTwoSearch.getHandCombination();
 
-        pOneHandCombination = playerOneSearch.sortCards(pOneHandCombination);
-        pTwoHandCombination = playerTwoSearch.sortCards(pTwoHandCombination);
+
+        pOneHandCombination.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
+        pTwoHandCombination.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
 
         for (int i = pOneHandCombination.size() - 1; i >= 0; i--) {
             int rankOne = pOneHandCombination.get(i).getRank().getValue();
@@ -261,37 +275,6 @@ public class BestDealer implements Dealer {
             throw new InvalidPokerBoardException("Найдены дупликаты карт на столе.");
         }
     }
-    private List<Card> parseStringToCard(String cards) {
-        List<Card> parseHand = new ArrayList<>();
-        StringBuilder rank = new StringBuilder();
-        Suit suitValue = null;
-        Rank rankValue = null;
 
-        for (int i = 0; i < cards.length(); i++) {
-            char currentChar = cards.charAt(i);
-            if (currentChar != 'H' && currentChar != 'D' && currentChar != 'C' && currentChar != 'S') {
-                rank.append(currentChar);
-            } else {
-                for (Rank ranks : Rank.values()) {
-                    if (ranks.getSymbol().equals(String.valueOf(rank))) {
-                        rankValue = ranks;
-                        break;
-                    }
-                }
-                for (Suit suit : Suit.values()) {
-                    if (suit.getValue().equals(String.valueOf(currentChar))){
-                        suitValue = suit;
-                        break;
-                    }
-                }
-                parseHand.add(new Card(rankValue, suitValue));
-                suitValue = null;
-                rankValue = null;
-                rank = new StringBuilder();
-            }
-
-        }
-        return parseHand;
-    }
 
 }
