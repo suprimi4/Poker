@@ -3,11 +3,11 @@ package org.example.main;
 public class PokerGame {
 
     public static void main(String[] args) {
-        for (int i = 0; i < 10000; i++) {
+
             BestDealer dealer = new BestDealer();
             Board board;
 
-            board = new Board("AS2S", "3D3H", "ADJS10S", "10H", "2H");
+            board = new Board("2C2H", "2C2H", "2C2H2C", "2C", "2H");
 
             PokerResult result = dealer.decideWinner(board);
             System.out.println("Игрок 1: " + board.getPlayerOne());
@@ -41,8 +41,6 @@ public class PokerGame {
                     break;
             }
         }
-
-    }
 
 
 }

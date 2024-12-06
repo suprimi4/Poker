@@ -253,7 +253,7 @@ public class BestDealer implements Dealer {
             throw new InvalidPokerBoardException("Игроки должны иметь по 2 карты в руке.");
         }
 
-        if (board.getFlopCards().size() != 3) {
+        if (board.getFlop() == null || board.getFlopCards().size() != 3 ) {
             throw new InvalidPokerBoardException("Флоп должен содержать 3 карты.");
         }
         if (board.getTurn() == null || board.getTurn().isEmpty()) {
