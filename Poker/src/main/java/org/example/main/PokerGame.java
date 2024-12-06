@@ -3,13 +3,10 @@ package org.example.main;
 public class PokerGame {
 
     public static void main(String[] args) {
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
             BestDealer dealer = new BestDealer();
-            Board board = dealer.dealCardsToPlayers();
-            board = dealer.dealFlop(board);
-            board = dealer.dealTurn(board);
-            board = dealer.dealRiver(board);
-
+            Board board;
+            board = new Board("AS2S", "3D3H", "ADJS10S","10H", "2H");
             PokerResult result = dealer.decideWinner(board);
             System.out.println("Игрок 1: " + board.getPlayerOne());
             System.out.println("Игрок 2: " + board.getPlayerTwo());

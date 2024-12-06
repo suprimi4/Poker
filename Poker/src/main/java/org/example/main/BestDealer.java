@@ -132,7 +132,7 @@ public class BestDealer implements Dealer {
     }
 
     private PokerResult compareKicker(Board board, List<Card> playerOneCombo, List<Card> playerTwoCombo) {
-        List<Card> fullTable = new ArrayList<>();
+        List<Card> fullTable = new ArrayList<>(board.getFlopCards());
         fullTable.addAll(board.getTurnCards());
         fullTable.addAll(board.getRiverCards());
         fullTable.addAll(board.getPlayerOneCards());
@@ -140,12 +140,12 @@ public class BestDealer implements Dealer {
         fullTable.removeAll(playerOneCombo);
         fullTable.removeAll(playerTwoCombo);
         fullTable.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
-
         int index = 0;
 
         for (int i = playerOneCombo.size(); i < 5 ; i++) {
             playerOneCombo.add(fullTable.get(index));
-            playerTwoCombo.add(fullTable.get(index++));
+            playerTwoCombo.add(fullTable.get(index));
+            index++;
         }
         playerOneCombo.retainAll(board.getPlayerOneCards());
         playerTwoCombo.retainAll(board.getPlayerTwoCards());
