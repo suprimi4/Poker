@@ -3,7 +3,7 @@ package org.example.main;
 public class PokerGame {
 
     public static void main(String[] args) {
-        for (int i = 0; i < 50000; i++) {
+        for (int i = 0; i < 1000000; i++) {
 
 
             BestDealer dealer = new BestDealer();
@@ -11,7 +11,6 @@ public class PokerGame {
             board = dealer.dealFlop(board);
             board = dealer.dealTurn(board);
             board = dealer.dealRiver(board);
-            board = new Board("3H6H","2D9S", "AS8C4S", "7C", "JC");
 
 
 

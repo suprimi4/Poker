@@ -246,10 +246,19 @@ public class PlayerHand {
         for (Map.Entry<Integer, Integer> entry : rankCount.entrySet()) {
             if (entry.getValue() == 3) {
                 handCombination = getCardsCombination(entry.getKey());
-                return true;
             }
         }
-        return false;
+
+        if (handCombination.size() > 3) {
+            handCombination = sortCards(handCombination);
+            handCombination.remove(0);
+            handCombination.remove(0);
+            handCombination.remove(0);
+        }
+
+
+
+        return handCombination.size() == 3;
     }
 
     public boolean isTwoPair(List<Card> cardsToCheck) {
