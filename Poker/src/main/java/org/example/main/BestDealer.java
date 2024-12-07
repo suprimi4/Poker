@@ -78,8 +78,6 @@ public class BestDealer implements Dealer {
             }
             case FULL_HOUSE -> {
                 return compareFullHouse(playerOneSearch, playerTwoSearch);
-            } case HIGH_CARD -> {
-                return compareHighCard(board);
             }
             default -> {
                 return compareHighCombo(board,playerOneSearch,playerTwoSearch);
@@ -89,39 +87,7 @@ public class BestDealer implements Dealer {
 
     }
 
-    private PokerResult compareHighCard(Board board) {
-        List<Card> playerOneHand = new ArrayList<>(board.getPlayerOneCards());
-        List<Card> playerTwoHand = new ArrayList<>(board.getPlayerTwoCards());
 
-        playerOneHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
-        playerTwoHand.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
-
-        List<Card> tableCards = new ArrayList<>(board.getFlopCards());
-        tableCards.addAll(board.getTurnCards());
-        tableCards.addAll(board.getRiverCards());
-
-        tableCards.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
-        int maxTableValue = tableCards.get(0).getRank().getValue();
-
-        int rankOne = playerOneHand.get(0).getRank().getValue();
-        int rankTwo = playerTwoHand.get(0).getRank().getValue();
-
-        if (maxTableValue > rankOne && maxTableValue > rankTwo) {
-            return PokerResult.DRAW;
-        }
-
-        for (int i = 0; i < playerTwoHand.size(); i++) {
-            rankOne = playerOneHand.get(i).getRank().getValue();
-            rankTwo = playerTwoHand.get(i).getRank().getValue();
-            if (rankOne > rankTwo) {
-                return PokerResult.PLAYER_ONE_WIN;
-            } else if (rankOne < rankTwo){
-                return PokerResult.PLAYER_TWO_WIN;
-            }
-        }
-        return PokerResult.DRAW;
-
-    }
 
     private PokerResult compareHighCombo(Board board, PlayerHand playerOneSearch, PlayerHand playerTwoSearch) {
         List<Card> playerOneCombo = playerOneSearch.getHandCombination();

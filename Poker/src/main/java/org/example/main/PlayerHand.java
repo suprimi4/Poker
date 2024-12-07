@@ -257,7 +257,6 @@ public class PlayerHand {
         Map<Integer, Integer> rankCount = getRankCount(cardsToCheck);
 
         int pairCounter = 0;
-        int[] maxKey;
         for (Map.Entry<Integer, Integer> entry : rankCount.entrySet()) {
             if (entry.getValue() == 2) {
                     handCombination.addAll(getCardsCombination(entry.getKey()));
@@ -265,10 +264,7 @@ public class PlayerHand {
 
             }
         }
-
-
         handCombination = sortCards(handCombination);
-        int maxSize = handCombination.size();
         if (handCombination.size() > 4) {
             handCombination.remove(0);
             handCombination.remove(0);
