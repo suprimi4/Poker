@@ -4,6 +4,8 @@ package org.example.main;
 import java.util.*;
 
 public class BestDealer implements Dealer {
+    BoardCardReceiver cardReceiver = new BoardCardReceiver();
+
     Deck deck;
 
     public BestDealer() {
@@ -39,17 +41,17 @@ public class BestDealer implements Dealer {
     public PokerResult decideWinner(Board board) throws InvalidPokerBoardException {
         validateBoard(board);
 
-        List<Card> playerOneCombintaion = new ArrayList<>(board.getPlayerOneCards());
+        List<Card> playerOneCombintaion = new ArrayList<>(cardReceiver.getPlayerOneCards(board));
 
-        playerOneCombintaion.addAll(board.getFlopCards());
-        playerOneCombintaion.addAll(board.getTurnCards());
-        playerOneCombintaion.addAll(board.getRiverCards());
+        playerOneCombintaion.addAll(cardReceiver.getFlopCards(board));
+        playerOneCombintaion.addAll(cardReceiver.getTurnCards(board));
+        playerOneCombintaion.addAll(cardReceiver.getRiverCards(board));
 
-        List<Card> playerTwoCombination = new ArrayList<>(board.getPlayerTwoCards());
+        List<Card> playerTwoCombination = new ArrayList<>(cardReceiver.getPlayerTwoCards(board));
 
-        playerTwoCombination.addAll(board.getFlopCards());
-        playerTwoCombination.addAll(board.getTurnCards());
-        playerTwoCombination.addAll(board.getRiverCards());
+        playerTwoCombination.addAll(cardReceiver.getFlopCards(board));
+        playerTwoCombination.addAll(cardReceiver.getTurnCards(board));
+        playerTwoCombination.addAll(cardReceiver.getRiverCards(board));
 
         PlayerHand playerOneSearch = new PlayerHand(playerOneCombintaion);
         PlayerHand playerTwoSearch = new PlayerHand(playerTwoCombination);
@@ -111,11 +113,11 @@ public class BestDealer implements Dealer {
     }
 
     private PokerResult compareKicker(Board board, List<Card> playerOneCombo, List<Card> playerTwoCombo) {
-        List<Card> fullTable = new ArrayList<>(board.getFlopCards());
-        fullTable.addAll(board.getTurnCards());
-        fullTable.addAll(board.getRiverCards());
-        fullTable.addAll(board.getPlayerOneCards());
-        fullTable.addAll(board.getPlayerTwoCards());
+        List<Card> fullTable = new ArrayList<>(cardReceiver.getFlopCards(board));
+        fullTable.addAll(cardReceiver.getTurnCards(board));
+        fullTable.addAll(cardReceiver.getRiverCards(board));
+        fullTable.addAll(cardReceiver.getPlayerOneCards(board));
+        fullTable.addAll(cardReceiver.getPlayerTwoCards(board));
         fullTable.removeAll(playerOneCombo);
         fullTable.removeAll(playerTwoCombo);
         fullTable.sort((card1, card2) -> Integer.compare(card2.getRank().getValue(), card1.getRank().getValue()));
@@ -126,8 +128,8 @@ public class BestDealer implements Dealer {
             playerTwoCombo.add(fullTable.get(index));
             index++;
         }
-        playerOneCombo.retainAll(board.getPlayerOneCards());
-        playerTwoCombo.retainAll(board.getPlayerTwoCards());
+        playerOneCombo.retainAll(cardReceiver.getPlayerOneCards(board));
+        playerTwoCombo.retainAll(cardReceiver.getPlayerTwoCards(board));
 
         if (playerOneCombo.isEmpty() && playerTwoCombo.isEmpty()) {
             return PokerResult.DRAW;
@@ -215,26 +217,26 @@ public class BestDealer implements Dealer {
 
 
     private void validateBoard(Board board) throws InvalidPokerBoardException {
-        if (board.getPlayerOneCards().size() != 2 || board.getPlayerTwoCards().size() != 2) {
+        if (cardReceiver.getPlayerOneCards(board).size() != 2 || cardReceiver.getPlayerTwoCards(board).size() != 2) {
             throw new InvalidPokerBoardException("Игроки должны иметь по 2 карты в руке.");
         }
 
-        if (board.getFlop() == null || board.getFlopCards().size() != 3 ) {
+        if (board.getFlop() == null || cardReceiver.getFlopCards(board).size() != 3 ) {
             throw new InvalidPokerBoardException("Флоп должен содержать 3 карты.");
         }
-        if (board.getTurn() == null || board.getTurn().isEmpty()) {
+        if (board.getTurn() == null || cardReceiver.getTurnCards(board).isEmpty()) {
             throw new InvalidPokerBoardException("Терн должен быть на столе");
         }
-        if (board.getRiver() == null || board.getRiver().isEmpty()) {
+        if (board.getRiver() == null || cardReceiver.getRiverCards(board).isEmpty()) {
             throw new InvalidPokerBoardException("Ривер должен быть на столе");
         }
 
         List<Card> allCards = new ArrayList<>();
-        allCards.addAll(board.getPlayerOneCards());
-        allCards.addAll(board.getPlayerTwoCards());
-        allCards.addAll(board.getFlopCards());
-        allCards.addAll(board.getTurnCards());
-        allCards.addAll(board.getRiverCards());
+        allCards.addAll(cardReceiver.getPlayerOneCards(board));
+        allCards.addAll(cardReceiver.getPlayerTwoCards(board));
+        allCards.addAll(cardReceiver.getFlopCards(board));
+        allCards.addAll(cardReceiver.getTurnCards(board));
+        allCards.addAll(cardReceiver.getRiverCards(board));
 
         Set<Card> uniqueCards = new HashSet<>(allCards);
         if (uniqueCards.size() != allCards.size()) {

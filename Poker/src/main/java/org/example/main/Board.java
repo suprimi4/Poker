@@ -67,57 +67,6 @@ public class Board {
                 '}';
     }
 
-    private List<Card> parseStringToCard(String cards) {
-        List<Card> parseHand = new ArrayList<>();
-        StringBuilder rank = new StringBuilder();
-        Suit suitValue = null;
-        Rank rankValue = null;
 
-        for (int i = 0; i < cards.length(); i++) {
-            char currentChar = cards.charAt(i);
-            if (currentChar != 'H' && currentChar != 'D' && currentChar != 'C' && currentChar != 'S') {
-                rank.append(currentChar);
-            } else {
-                for (Rank ranks : Rank.values()) {
-                    if (ranks.getSymbol().equals(String.valueOf(rank))) {
-                        rankValue = ranks;
-                        break;
-                    }
-                }
-                for (Suit suit : Suit.values()) {
-                    if (suit.getValue().equals(String.valueOf(currentChar))){
-                        suitValue = suit;
-                        break;
-                    }
-                }
-                parseHand.add(new Card(rankValue, suitValue));
-                suitValue = null;
-                rankValue = null;
-                rank = new StringBuilder();
-            }
-
-        }
-        return parseHand;
-    }
-
-    public List<Card> getPlayerOneCards() {
-        return parseStringToCard(playerOne);
-    }
-
-    public List<Card> getPlayerTwoCards() {
-        return parseStringToCard(playerTwo);
-    }
-
-    public List<Card> getFlopCards() {
-        return parseStringToCard(flop);
-    }
-
-    public List<Card> getTurnCards() {
-        return parseStringToCard(turn);
-    }
-
-    public List<Card> getRiverCards() {
-        return parseStringToCard(river);
-    }
 
 }

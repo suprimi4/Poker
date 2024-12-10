@@ -8,7 +8,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerHandTest {
-
+    BoardCardReceiver cardReceiver = new BoardCardReceiver();
     @Test
     void testIsRoyalFlash() {
         List<Card> list = getCombinationList("10HJH","2H5H","QHKHAH","KS","AS");
@@ -87,10 +87,10 @@ class PlayerHandTest {
     private  List<Card> getCombinationList( String playerOne, String playerTwo, String flop, String turn, String river) {
         Board board = new Board(playerOne,playerTwo,flop,turn,river);
         List<Card> list = new ArrayList<>();
-        list.addAll(board.getPlayerOneCards());
-        list.addAll(board.getFlopCards());
-        list.addAll(board.getTurnCards());
-        list.addAll(board.getRiverCards());
+        list.addAll(cardReceiver.getPlayerOneCards(board));
+        list.addAll(cardReceiver.getFlopCards(board));
+        list.addAll(cardReceiver.getTurnCards(board));
+        list.addAll(cardReceiver.getRiverCards(board));
         return list;
     }
 }
