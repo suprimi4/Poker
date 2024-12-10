@@ -35,25 +35,25 @@ public class BoardCardReceiver {
             if (currentChar != 'H' && currentChar != 'D' && currentChar != 'C' && currentChar != 'S') {
                 rank.append(currentChar);
             } else {
-                // Match rank
+
                 for (Rank ranks : Rank.values()) {
                     if (ranks.getSymbol().equals(rank.toString())) {
                         rankValue = ranks;
                         break;
                     }
                 }
-                // Match suit
+
                 for (Suit suit : Suit.values()) {
                     if (suit.getValue().equals(String.valueOf(currentChar))) {
                         suitValue = suit;
                         break;
                     }
                 }
-                // Add new card to the list
+
                 if (rankValue != null && suitValue != null) {
                     parsedCards.add(new Card(rankValue, suitValue));
                 }
-                // Reset for next card
+
                 rank = new StringBuilder();
                 rankValue = null;
                 suitValue = null;
